@@ -14,6 +14,9 @@ YELLOW = (255, 255, 0)
 
 BORDER = pygame.Rect(WIDTH // 2 - 5, 0, 10, HEIGHT) 
 
+new_icon = pygame.image.load('Logo Game.JPEG')
+pygame.display.set_icon(new_icon)
+
 HEALTH_FONT = pygame.font.SysFont('comicsans', 40)
 WINNER_FONT = pygame.font.SysFont('comicsans', 100)
 
@@ -104,6 +107,24 @@ def draw_winner(text):
 
 MENU_FONT = pygame.font.SysFont('comicsans', 30)
 
+def draw_end_menu(winner_text):
+    run = True
+    while run:
+        WIN.fill(BLACK)
+        end_text = MENU_FONT.render(f"{winner_text} Wins! Press 'R' to restart or 'Q' to quit.", 1, WHITE)
+        WIN.blit(end_text, (WIDTH//2 - end_text.get_width()//2, HEIGHT//2 - end_text.get_height()//2))
+        pygame.display.update()
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()  
+                run = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:  
+                    return True  # Mengulang permainan
+                elif event.key == pygame.K_q:
+                    return False 
+
 def main():
     red = pygame.Rect(700, 300, SPACESHIP_WIDTH, SPACESHIP_HEIGHT)
     yellow = pygame.Rect(100, 300, SPACESHIP_WIDTH, SPACESHIP_HEIGHT)
@@ -144,9 +165,16 @@ def main():
                 BULLET_HIT_SOUND.play()
 
         if red_health <= 0 or yellow_health <= 0:
-            winner_text = "LEFT" if red_health <= 0 else "RIGHT"
-            draw_winner(f"{winner_text} Wins!")
-            break 
+            if red_health <= 0:
+                winner_text = "Left"
+            else:
+                winner_text = "Right"
+
+            if draw_end_menu(winner_text):
+                # Mulai ulang permainan
+                main()
+            else:
+                break  
 
         keys_pressed = pygame.key.get_pressed()
         yellow_handle_movement(keys_pressed, yellow)
