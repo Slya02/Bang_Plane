@@ -3,10 +3,9 @@ import os
 
 pygame.init()
 
-# Set up display (window)
 WIDTH, HEIGHT = 900, 500
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Bang Star")
+pygame.display.set_caption("Bang Plane")
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -101,6 +100,27 @@ def draw_winner(text):
     pygame.display.update()
     pygame.time.delay(5000)
 
+MENU_FONT = pygame.font.SysFont('comicsans', 30)
+
+def draw_end_menu(winner_text):
+    run = True
+    while run:
+        WIN.fill(BLACK)
+        end_text = MENU_FONT.render(f"{winner_text} Wins! Press 'R' to restart or 'Q' to quit.", 1, WHITE)
+        WIN.blit(end_text, (WIDTH//2 - end_text.get_width()//2, HEIGHT//2 - end_text.get_height()//2))
+        pygame.display.update()
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()  # Pindahkan pygame.quit() ke sini
+                run = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    return True  
+                elif event.key == pygame.K_q:
+                    pygame.quit()
+                    return False
+
 def main():
     red = pygame.Rect(700, 300, SPACESHIP_WIDTH, SPACESHIP_HEIGHT)
     yellow = pygame.Rect(100, 300, SPACESHIP_WIDTH, SPACESHIP_HEIGHT)
@@ -137,16 +157,16 @@ def main():
                 yellow_health -= 1
                 BULLET_HIT_SOUND.play()
 
-        winner_text = ""
-        if red_health <= 0:
-            winner_text = "YELLOW WINS"
+        if red_health <= 0 or yellow_health <= 0:
+            if red_health <= 0:
+                winner_text = "YELLOW"
+            else:
+                winner_text = "RED"
 
-        if yellow_health <= 0:
-            winner_text = "RED WINS"
-
-        if winner_text != "":
-            draw_winner(winner_text)
-            break
+            if draw_end_menu(winner_text):
+                main()
+            else:
+                break  
 
         keys_pressed = pygame.key.get_pressed()
         yellow_handle_movement(keys_pressed, yellow)
@@ -156,6 +176,28 @@ def main():
 
         draw_window(red, yellow, red_bullets, yellow_bullets, red_health, yellow_health)
 
-# Panggil fungsi main() jika file ini dijalankan secara langsung
+def main_menu():
+    run = True
+    while run:
+        WIN.fill(BLACK)
+        title = MENU_FONT.render("Press space to start...", 1, WHITE)
+        WIN.blit(title, (WIDTH//2 - title.get_width()//2, HEIGHT//2 - title.get_height()//2))
+        pygame.display.update()
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()  
+                run = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:  
+                    main()   
+
+    pygame.quit() 
+
 if __name__ == "__main__":
-    main()
+    pygame.init()
+    # Set up display (window)
+    WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+    pygame.display.set_caption("Bang Plane")
+
+    main_menu()
