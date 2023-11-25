@@ -12,7 +12,7 @@ BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 YELLOW = (255, 255, 0)
 
-BORDER = pygame.Rect(WIDTH // 2 - 5, 0, 10, HEIGHT)
+BORDER = pygame.Rect(WIDTH // 2 - 5, 0, 10, HEIGHT) 
 
 HEALTH_FONT = pygame.font.SysFont('comicsans', 40)
 WINNER_FONT = pygame.font.SysFont('comicsans', 100)
@@ -23,16 +23,18 @@ BULLET_VEL = 7
 MAX_BULLETS = 5
 SPACESHIP_WIDTH, SPACESHIP_HEIGHT = 55, 40
 
-BULLET_FIRE_SOUND = pygame.mixer.Sound(os.path.join('GUN+Silencer.mp3'))
-BULLET_HIT_SOUND = pygame.mixer.Sound(os.path.join('Grenade+1.mp3'))
+BULLET_FIRE_SOUND = pygame.mixer.Sound(os.path.join('Suara Tembakan.mp3'))
+BULLET_HIT_SOUND = pygame.mixer.Sound(os.path.join('Sound Ledakan (2).mp3'))
 
 YELLOW_HIT = pygame.USEREVENT + 1
 RED_HIT = pygame.USEREVENT + 2
 
-YELLOW_SPACESHIP_IMAGE = pygame.image.load(os.path.join('spaceship_yellow.png'))
+SPACESHIP_WIDTH, SPACESHIP_HEIGHT = 120, 100  # Mengubah ukuran pesawat menjadi lebih besar
+
+YELLOW_SPACESHIP_IMAGE = pygame.image.load(os.path.join('Plane model 1.png'))
 YELLOW_SPACESHIP = pygame.transform.rotate(pygame.transform.scale(YELLOW_SPACESHIP_IMAGE, (SPACESHIP_WIDTH, SPACESHIP_HEIGHT)), 90)
 
-RED_SPACESHIP_IMAGE = pygame.image.load(os.path.join('spaceship_red.png'))
+RED_SPACESHIP_IMAGE = pygame.image.load(os.path.join('plane model 2.png'))
 RED_SPACESHIP = pygame.transform.rotate(pygame.transform.scale(RED_SPACESHIP_IMAGE, (SPACESHIP_WIDTH, SPACESHIP_HEIGHT)), 270)
 
 SPACE = pygame.transform.scale(pygame.image.load(os.path.join('space.png')), (WIDTH, HEIGHT))
@@ -102,25 +104,6 @@ def draw_winner(text):
 
 MENU_FONT = pygame.font.SysFont('comicsans', 30)
 
-def draw_end_menu(winner_text):
-    run = True
-    while run:
-        WIN.fill(BLACK)
-        end_text = MENU_FONT.render(f"{winner_text} Wins! Press 'R' to restart or 'Q' to quit.", 1, WHITE)
-        WIN.blit(end_text, (WIDTH//2 - end_text.get_width()//2, HEIGHT//2 - end_text.get_height()//2))
-        pygame.display.update()
-        
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()  # Pindahkan pygame.quit() ke sini
-                run = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_r:
-                    return True  
-                elif event.key == pygame.K_q:
-                    pygame.quit()
-                    return False
-
 def main():
     red = pygame.Rect(700, 300, SPACESHIP_WIDTH, SPACESHIP_HEIGHT)
     yellow = pygame.Rect(100, 300, SPACESHIP_WIDTH, SPACESHIP_HEIGHT)
@@ -149,6 +132,9 @@ def main():
                     red_bullets.append(bullet)
                     BULLET_FIRE_SOUND.play()
 
+                if event.key == pygame.K_q:  
+                    running = False
+
             if event.type == RED_HIT:
                 red_health -= 1
                 BULLET_HIT_SOUND.play()
@@ -158,15 +144,9 @@ def main():
                 BULLET_HIT_SOUND.play()
 
         if red_health <= 0 or yellow_health <= 0:
-            if red_health <= 0:
-                winner_text = "YELLOW"
-            else:
-                winner_text = "RED"
-
-            if draw_end_menu(winner_text):
-                main()
-            else:
-                break  
+            winner_text = "LEFT" if red_health <= 0 else "RIGHT"
+            draw_winner(f"{winner_text} Wins!")
+            break 
 
         keys_pressed = pygame.key.get_pressed()
         yellow_handle_movement(keys_pressed, yellow)
@@ -186,17 +166,14 @@ def main_menu():
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()  
                 run = False
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:  
-                    main()   
+                if event.key == pygame.K_SPACE:
+                    main() 
 
     pygame.quit() 
 
 if __name__ == "__main__":
-    pygame.init()
-    # Set up display (window)
     WIN = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Bang Plane")
 
