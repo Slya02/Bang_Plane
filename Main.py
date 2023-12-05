@@ -33,7 +33,7 @@ BULLET_HIT_SOUND = pygame.mixer.Sound(os.path.join('Sound Ledakan (2).mp3'))
 YELLOW_HIT = pygame.USEREVENT + 1
 RED_HIT = pygame.USEREVENT + 2
 
-SPACESHIP_WIDTH, SPACESHIP_HEIGHT = 120, 100  # Mengubah ukuran pesawat menjadi lebih besar
+SPACESHIP_WIDTH, SPACESHIP_HEIGHT = 120, 100  
 
 YELLOW_SPACESHIP_IMAGE = pygame.image.load(os.path.join('Plane model 1.png'))
 YELLOW_SPACESHIP = pygame.transform.rotate(pygame.transform.scale(YELLOW_SPACESHIP_IMAGE, (SPACESHIP_WIDTH, SPACESHIP_HEIGHT)), 90)
@@ -99,7 +99,6 @@ def handle_bullets(yellow_bullets, red_bullets, yellow, red):
             red_bullets.remove(bullet)
         elif bullet.x < 0:
             red_bullets.remove(bullet)
-
 
 def main_menu():
     run = True
@@ -197,7 +196,8 @@ def draw_end_menu(winner_text):
                 run = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:  
-                    return True 
+                    main()
+                    return False
                 elif event.key == pygame.K_q:
                     return False 
 
